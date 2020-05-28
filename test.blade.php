@@ -427,3 +427,26 @@ This comment will not be in the rendered HTML
 {{-- Validation Errors --}}
 @error('title')
 @enderror
+
+{{-- Lravel 7 Components --}}
+@props(['type' => 'info', 'message'])
+
+<?php
+    foreach (range(1, 10) as $number) {
+        echo $number;
+    }
+?>
+<h1 type="error" :message="$message"></h1>
+
+<x-alerts.faliure type="error" :message="$message">
+    <strong>Whoops!</strong> Something went wrong!
+</x-alert>
+
+<x-inputs.button/>
+<x-inputs.my-button/>
+<x-forms.inputs.my-button/>
+<x-forms_hello.inputs.my-button/>
+<x-forms-hello.inputs.my-button  />
+
+<x-alert.succes type="error" :message="$message"/>
+<x-alert.succes       type="error" :message="$message"/>

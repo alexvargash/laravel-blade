@@ -3,6 +3,34 @@
 name: Laravel Blade
 file_extensions: [blade, blade.php]
 scope: text.blade
+
+variables:
+  ascii_space: '\t\n\f '
+
+  attribute_name_char: '[{{ascii_space}}=/>]'
+  attribute_name_start: (?=[^{{attribute_name_char}}])
+  attribute_name_break: (?={{attribute_name_char}})
+
+  unquoted_attribute_start: (?=[^{{ascii_space}}=>])
+  unquoted_attribute_break: (?=[{{ascii_space}}]|/?>)
+
+  tag_name_char: '[^{{ascii_space}}/<>]'
+  tag_name_break: (?=[^[^{{ascii_space}}/<>]])
+  tag_name: '[A-Za-z]{{tag_name_char}}*'
+
+  block_tag_name: |-
+    (?ix:
+      address|applet|article|aside|blockquote|center|dd|dir|div|dl|dt|figcaption|figure|footer|frame|frameset|h1|h2|h3|h4|h5|h6|header|iframe|menu|nav|noframes|object|ol|p|pre|section|ul
+    ){{tag_name_break}}
+  inline_tag_name: |-
+    (?ix:
+      abbr|acronym|area|audio|b|base|basefont|bdi|bdo|big|br|canvas|caption|cite|code|del|details|dfn|dialog|em|font|head|html|i|img|ins|isindex|kbd|li|link|map|mark|menu|menuitem|meta|noscript|param|picture|q|rp|rt|rtc|ruby|s|samp|script|small|source|span|strike|strong|style|sub|summary|sup|time|title|track|tt|u|var|video|wbr
+    ){{tag_name_break}}
+  form_tag_name: |-
+    (?ix:
+      button|datalist|input|label|legend|meter|optgroup|option|output|progress|select|template|textarea
+    ){{tag_name_break}}
+
 contexts:
   main:
     - match: ''
@@ -90,7 +118,7 @@ contexts:
             pop: true
           - include: 'scope:source.php'
 
-        - match: '(\s{0}|^)(\@)\b(acfrepeater|auth|block|break|can|cannot|canany|choice|case|component|continue|dd|debug|dump|each|elsecan|elsecannot|elsecanany|elseif|embed|error|extends|for|foreach|forelse|guest|hasSection|hipchat|if|isset|empty|include|includeIf|includeWhen|inject|lang|layout|macro|macrodef|method|minify|partial|php|push|render|section|servers|set|slack|slot|stack|story|switch|task|unless|unset|while|wpposts|yield)\b(?=(|\s*|)\(\()'
+        - match: '(\s{0}|^)(\@)\b(acfrepeater|auth|block|break|can|cannot|canany|choice|case|component|continue|dd|debug|dump|each|elsecan|elsecannot|elsecanany|elseif|embed|error|extends|for|foreach|forelse|guest|hasSection|hipchat|if|isset|empty|include|includeIf|includeWhen|inject|lang|layout|macro|macrodef|method|minify|partial|php|push|render|section|servers|set|slack|slot|stack|story|switch|task|unless|unset|while|wpposts|yield|props)\b(?=(|\s*|)\(\()'
           captures:
             0: punctuation.section.embedded.php
             2: constant.other.inline-data.html
@@ -102,7 +130,7 @@ contexts:
               pop: true
             - include: 'scope:source.php'
 
-        - match: '(\s{0}|^)(\@)\b(acfrepeater|auth|block|break|can|cannot|canany|choice|case|component|continue|dd|debug|dump|each|elsecan|elsecannot|elsecanany|elseif|embed|error|extends|for|foreach|forelse|guest|hasSection|hipchat|if|isset|empty|include|includeIf|includeWhen|inject|lang|layout|macro|macrodef|method|minify|partial|php|push|render|section|servers|set|slack|slot|stack|story|switch|task|unless|unset|while|wpposts|yield)\b(?=(|\s*|)\()'
+        - match: '(\s{0}|^)(\@)\b(acfrepeater|auth|block|break|can|cannot|canany|choice|case|component|continue|dd|debug|dump|each|elsecan|elsecannot|elsecanany|elseif|embed|error|extends|for|foreach|forelse|guest|hasSection|hipchat|if|isset|empty|include|includeIf|includeWhen|inject|lang|layout|macro|macrodef|method|minify|partial|php|push|render|section|servers|set|slack|slot|stack|story|switch|task|unless|unset|while|wpposts|yield|props)\b(?=(|\s*|)\()'
           captures:
             0: punctuation.section.embedded.php
             2: constant.other.inline-data.html
@@ -137,3 +165,16 @@ contexts:
           captures:
             0: support.function
             2: constant.other.inline-data.html
+
+        - match: '(<)(x-)([a-zA-Z0-9._-]+)(\s)'
+          captures:
+            1: punctuation.definition.tag.begin.html
+            2: invalid.illegal.custom-tag-name.html
+            3: invalid.illegal.custom-tag-name.html
+          push:
+            - match: '(?<=$)'
+              captures:
+                0: invalid.illegal.custom-tag-name.html
+
+
+
